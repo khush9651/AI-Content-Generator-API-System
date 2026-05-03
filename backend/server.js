@@ -1,3 +1,11 @@
+app.get("/", (req, res) => {
+  res.send("Backend root working ✅");
+});
+
+app.get("/health", (req, res) => {
+  res.send("Health OK ✅");
+});
+
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
