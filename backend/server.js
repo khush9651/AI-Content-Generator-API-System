@@ -1,11 +1,3 @@
-app.get("/", (req, res) => {
-  res.send("Backend root working ✅");
-});
-
-app.get("/health", (req, res) => {
-  res.send("Health OK ✅");
-});
-
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -15,6 +7,13 @@ const errorHandler = require('./src/middleware/errorHandler');
 const { getUsageStats } = require('./src/services/groq.service');
 
 const app  = express();
+app.get("/", (req, res) => {
+  res.send("Backend root working ✅");
+});
+
+app.get("/health", (req, res) => {
+  res.send("Health OK ✅");
+});
 const PORT = process.env.PORT || 5000;
 
 // ─── Startup: validate critical env vars ──────────────────────────────────────
