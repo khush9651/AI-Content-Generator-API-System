@@ -143,11 +143,27 @@ Return ONLY a JSON object with exactly these fields:
   }
 
   // ─── Parse JSON body ────────────────────────────────────────────────────────
-  let body;
+  let parsed;
+
   try {
-    body = await response.json();
-  } catch (_) {
-    throw new Error('Groq returned a non-JSON response. Please try again.');
+    parsed = JSON.parse(cleaned);
+  } catch (parseErr) {
+    console.warn('[Groq] JSON parse failed — using fallback mode');
+  
+    // ✅ Fallback: treat response as plain text
+    return {
+      topic,
+      tone,
+      blog: cleaned,
+      linkedin_post: cleaned.slice(0, 200),
+      summary: cleaned
+        .split('\n')
+        .filter(line => line.trim() !== '')
+        .slice(0, 5),
+      generated_at: new Date().toISOString(),
+      model: GROQ_MODEL,
+      fallback: true,
+    };
   }
 
   // Log usage metrics
