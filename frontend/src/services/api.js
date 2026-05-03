@@ -1,9 +1,14 @@
 import axios from 'axios';
 
-// Use Vite's dev proxy (/api → http://localhost:5000/api)
-// This avoids CORS issues and direct connection errors in development.
+// Dynamic base URL:
+// - In development → uses Vite proxy (/api → localhost backend)
+// - In production → uses deployed backend URL from env
+const BASE_URL = import.meta.env.DEV
+  ? '/api'
+  : `${import.meta.env.VITE_API_URL}/api`;
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: BASE_URL,
   timeout: 60000,
   headers: {
     'Content-Type': 'application/json',
@@ -16,10 +21,15 @@ api.interceptors.response.use(
   (error) => {
     const message =
       error.response?.data?.message ||
-      (error.code === 'ECONNABORTED' ? 'Request timed out. Please try again.' : null) ||
-      (error.code === 'ERR_NETWORK' ? 'Cannot connect to server. Make sure the backend is running on port 5000.' : null) ||
+      (error.code === 'ECONNABORTED'
+        ? 'Request timed out. Please try again.'
+        : null) ||
+      (error.code === 'ERR_NETWORK'
+        ? 'Cannot connect to server. Please check backend deployment.'
+        : null) ||
       error.message ||
       'An unexpected error occurred.';
+
     return Promise.reject(new Error(message));
   }
 );
@@ -30,5 +40,6 @@ export const contentApi = {
 
   getHistory: () => api.get('/content/history'),
 
-  deleteHistoryItem: (id) => api.delete(`/content/history/${id}`),
+  deleteHistoryItem: (id) =>
+    api.delete(`/content/history/${id}`),
 };
