@@ -108,4 +108,3 @@ VITE_API_URL=http://localhost:5000
 - History dashboard (with MongoDB)
 - Loading progress steps UI
 - Responsive dark glassmorphism design
->>>>>>> 99f9b47 (Initial commit)
